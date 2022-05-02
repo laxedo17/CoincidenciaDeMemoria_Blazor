@@ -1,0 +1,82 @@
+﻿@page "/"
+
+@code {
+    int numeroDeCartas = 16;
+    List<int> cartas = new List<int>();
+    int[] arrayDeCartas = new int[16];
+    List<int> cartasClickadas = new List<int>();
+    List<int> cartasCoincidentes = new List<int>();
+
+    protected override void OnInitialized()
+    {
+        for (int i = 1; i <= numeroDeCartas / 2; i++)
+        {
+            cartas.Add(i);
+            cartas.Add(i);
+        }
+
+        for (int i = 0; i < numeroDeCartas; i++)
+        {
+            Random aleatorio = new Random();
+            //a primeira vez cartas.Count sera 16
+            int numeroAleatorio = aleatorio.Next(0, cartas.Count - 1);
+            arrayDeCartas[i] = cartas[numeroAleatorio];
+            cartas.RemoveAt(numeroAleatorio);
+        }
+    }
+
+    void CartaClickada(int indice)
+    {
+        if (cartasClickadas.Count == 2)
+        {
+            return;
+            //non fai nada, se foron clickadas 2 cartas, na espera de 1 segundo o xogador non pode facer nada
+        }
+
+        cartasClickadas.Add(indice);
+
+        Task.Delay(1000).ContinueWith((t) =>
+        {
+            if (cartasClickadas.Count == 2)
+            {
+                int num1 = arrayDeCartas[cartasClickadas[0]];
+                int num2 = arrayDeCartas[cartasClickadas[1]];
+
+                if (num1 == num2)
+                {
+                    cartasCoincidentes.Add(cartasClickadas[0]);
+                    cartasCoincidentes.Add(cartasClickadas[1]);
+                }
+
+                cartasClickadas.Clear();
+                StateHasChanged();
+            }
+        });
+
+
+
+
+    }
+}
+
+<h1>Blazor coincidencia de memoria</h1>
+<p>O xogo das coincidencias de memoria con cartas</p>
+
+<div class="cuadricula-memoria">
+    @for (int indice = 0; indice < arrayDeCartas.Length; indice++)
+    {
+        int indiceLocal = indice;
+        int carta = arrayDeCartas[indice];
+
+        if (cartasCoincidentes.Contains(indice))
+        {
+            <div class="encontrado"></div>
+        }
+        else
+        {
+            <div @onclick="() => CartaClickada(indiceLocal)">
+                <span hidden="@(!cartasClickadas.Contains(indiceLocal))">@carta</span>
+            </div>
+        }
+    }
+</div>

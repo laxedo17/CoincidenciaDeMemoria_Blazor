@@ -1,0 +1,20 @@
+.cuadricula-memoria {
+    display: grid;
+    grid-template-columns: 100px 100px 100px 100px;
+    grid-gap: 10px;
+}
+
+/*Estos grid van ter moitos descendentes xa que teremos numeros distintos*/
+.cuadricula-memoria>div {
+    height: 100px;
+    width: 100px;
+    background: green;
+    color: white;
+    display: flex;
+    justify-content: center;
+    font-size: 40px;
+}
+
+.cuadricula-memoria>div.encontrado {
+    background: white;
+}
